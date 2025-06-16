@@ -1,149 +1,180 @@
 import pygame
 import random
 import time
-from button import Button # By importing Button we can access methods from the Button class 
+from button import Button # Allows us to use our Button class
 
 pygame.init()
 
 clock = pygame.time.Clock()
 
-# Constants
+# --- Constants ---
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 500
-
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Simon Says")
 
+# --- Color Definitions ---
 GREEN_ON = (0, 255, 0)
-GREEN_OFF = (0, 227, 0)
+GREEN_OFF = (0, 150, 0)
 RED_ON = (255, 0, 0)
-RED_OFF = (227, 0, 0)
+RED_OFF = (150, 0, 0)
 BLUE_ON = (0, 0, 255)
-BLUE_OFF = (0, 0, 227)
+BLUE_OFF = (0, 0, 150)
 YELLOW_ON = (255, 255, 0)
-YELLOW_OFF = (227, 227, 0)
+YELLOW_OFF = (150, 150, 0)
 
-# Pass in respective sounds for each color 
-GREEN_SOUND = pygame.mixer.Sound("assets/bell1.mp3") # bell1
-RED_SOUND = pygame.mixer.Sound() # bell2
-BLUE_SOUND = pygame.mixer.Sound() # bell3
-YELLOW_SOUND = pygame.mixer.Sound() # bell4
+# --- Sound Loading ---
+# TODO: Load the sounds for red, blue, and yellow
+GREEN_SOUND = pygame.mixer.Sound("assets/bell1.mp3")
+RED_SOUND = None
+BLUE_SOUND = None
+YELLOW_SOUND = None
 
-# Button Sprite Objects
+
+# --- Button Sprite Objects ---
+# TODO: Create the red, blue, and yellow Button objects.
+# Use the green button as a reference.
+# The PDF provides the x, y coordinates:
+# red: (260, 10)
+# blue: (10, 260)
+# yellow: (260, 260)
 green = Button(GREEN_ON, GREEN_OFF, GREEN_SOUND, 10, 10)
-red = 
-blue = 
-yellow = 
+red = None
+blue = None
+yellow = None
 
-# Variables
-colors = ["green", "red", "blue", "yellow"]
+# A list to hold all our button objects for easier access
+all_buttons = [green, red, blue, yellow]
+
+# --- Game Variables ---
 cpu_sequence = []
-choice = ""
+player_sequence = []
+colors = ["green", "red", "blue", "yellow"]
+score = 0
 
-'''
-Draws game board
-'''
-
-
+# Draws the initial game board
 def draw_board():
-    # Call the draw method on all four button objects 
-    
+  # TODO: Call the .draw() method on all four button objects
+  # Pass in SCREEN as the argument.
+  # example: green.draw(SCREEN)
+  pass # Remove this pass statement when you add your code
 
+# --- Game Logic Functions ---
 
-'''
-Chooses a random color and appends to cpu_sequence.
-Illuminates randomly chosen color.
-'''
-
-
+# Computer takes its turn
 def cpu_turn():
-    choice = random.choice(colors)  # pick random color
-    cpu_sequence.append(choice)  # update cpu sequence
-    if choice == "green":
-        green.update(SCREEN)
-    # Check other three color options 
-    
+  # Pick a random color and add it to the sequence
+  choice = random.choice(colors)
+  cpu_sequence.append(choice)
 
+  # Illuminate the chosen button
+  if choice == "green":
+    green.update(SCREEN)
+  # TODO: Add the 'elif' conditions for "red", "blue", and "yellow"
+  # elif choice == "red":
+  #   red.update(SCREEN)
+  
+  # Allow the player to start their turn
+  player_turn()
 
-'''
-Plays pattern sequence that is being tracked by cpu_sequence 
-'''
-
-
+# Repeats the current CPU sequence for the player to see
 def repeat_cpu_sequence():
-    if(len(cpu_sequence) != 0):
-        for color in cpu_sequence:
-            if color == "green":
-                green.update(SCREEN)
-            elif color == "red":
-                red.update(SCREEN)
-            elif color == "blue":
-                blue.update(SCREEN)
-            else:
-                yellow.update(SCREEN)
-            pygame.time.wait(500)
+  if not cpu_sequence:
+    return # Do nothing if the sequence is empty
+  
+  # A small delay before the sequence starts
+  pygame.time.wait(500)
+  
+  for color in cpu_sequence:
+    if color == "green":
+      green.update(SCREEN)
+    elif color == "red":
+      red.update(SCREEN)
+    elif color == "blue":
+      blue.update(SCREEN)
+    else:
+      yellow.update(SCREEN)
+    # Wait a little between button flashes
+    pygame.time.wait(200)
 
-
-'''
-After cpu sequence is repeated the player must attempt to copy the same pattern sequence.
-The player is given 3 seconds to select a color and checks if the selected color matches the cpu pattern sequence.
-If player is unable to select a color within 3 seconds then the game is over and the pygame window closes.
-'''
-
-
+# Handles the player's turn
 def player_turn():
-    turn_time = time.time()
-    players_sequence = []
-    while time.time() <= turn_time + 3 and len(players_sequence) < len(cpu_sequence):
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # button click occured
-                # Grab the current position of mouse here 
-                pos = 
-                if green.selected(pos): # green button was selected 
-                    green.update(SCREEN) # illuminate button 
-                    players_sequence.append("green") # add to player sequence 
-                    check_sequence(players_sequence) # check if player choice was correct
-                    turn_time = time.time() # reset timer 
-                # Check other three options 
-                
-    # If player does not select a button within 3 seconds then the game closes 
-    if not time.time() <= turn_time + 3:
-        game_over()
+  global player_sequence
+  player_sequence = [] # Reset player's sequence for this round
 
-
-'''
-Checks if player's move matches the cpu pattern sequence 
-'''
-
-
-def check_sequence(players_sequence):
-    if players_sequence != cpu_sequence[:len(players_sequence)]:
-        game_over()
-
-
-'''
-Quits game and closes pygame window
-'''
-
-
-def game_over():
-    pygame.quit()
-    quit()
-
-
-# Game Loop
-while True:
-    for event in pygame.event.get():
+  # Loop until the player has matched the CPU's sequence length
+  while len(player_sequence) < len(cpu_sequence):
+    waiting_for_input = True
+    while waiting_for_input:
+      for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.display.quit()
-            pygame.quit()
-            quit()
-    pygame.display.update()
+          game_over()
+        
+        # Check for a mouse click
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+          # TODO: Get the current position of the mouse
+          # pos = ...
+          
+          # Check if the green button was selected
+          if green.selected(pos):
+            green.update(SCREEN)
+            player_sequence.append("green")
+            waiting_for_input = False # Exit the inner loop
+          # TODO: Add the 'elif' conditions for the other three buttons
+          # elif red.selected(pos):
+          #   ...
+          
+    # After each player click, check if the sequence is correct so far
+    check_sequence(player_sequence)
 
-    draw_board() # draws buttons onto pygame screen 
-    repeat_cpu_sequence() # repeats cpu sequence if it's not empty
-    cpu_turn() # cpu randomly chooses a new color
-    player_turn() # player tries to recreate cpu sequence 
-    pygame.time.wait(1000) # waits one second before repeating cpu sequence 
 
-    clock.tick(60)
-    
+# Checks if the player's move matches the CPU sequence
+def check_sequence(player_sequence):
+  global score
+  # Compare the player's sequence to the corresponding part of the CPU's sequence
+  if player_sequence != cpu_sequence[:len(player_sequence)]:
+    print("Wrong! Final Score:", score)
+    game_over()
+  else:
+    # If the player completes the whole sequence correctly
+    if len(player_sequence) == len(cpu_sequence):
+      score += 1
+      print("Correct! Score:", score)
+      # Give a small delay before the next round
+      pygame.time.wait(500)
+
+
+# Quits the game
+def game_over():
+  pygame.quit()
+  quit()
+
+
+# --- Main Game Loop ---
+running = True
+while running:
+  # Handle the quit event
+  for event in pygame.event.get():
+    if event.type == pygame.QUIT:
+      running = False
+
+  # Clear the screen
+  SCREEN.fill((40, 40, 40)) # A dark grey background
+
+  # Draw the buttons
+  draw_board()
+  
+  # Show the CPU sequence
+  repeat_cpu_sequence()
+  
+  # Let the CPU choose a new color and start the player's turn
+  cpu_turn()
+  
+  # A brief pause before the next round starts
+  pygame.time.wait(1000)
+
+  pygame.display.update()
+  clock.tick(60)
+
+# Quit the game properly when the loop ends
+game_over()
