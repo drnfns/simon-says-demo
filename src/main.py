@@ -4,7 +4,6 @@ import time
 from button import Button # Allows us to use our Button class
 
 pygame.init()
-
 clock = pygame.time.Clock()
 
 # --- Constants ---
@@ -30,21 +29,15 @@ RED_SOUND = None
 BLUE_SOUND = None
 YELLOW_SOUND = None
 
-
 # --- Button Sprite Objects ---
 # TODO: Create the red, blue, and yellow Button objects.
-# Use the green button as a reference.
-# The PDF provides the x, y coordinates:
-# red: (260, 10)
-# blue: (10, 260)
-# yellow: (260, 260)
+# Use the green button as a reference. Its width and height are 230.
+# If the buttons are 230 pixels in width and height, and the spacing
+# are 10 pixels, where should the red, blue and yellow be?
 green = Button(GREEN_ON, GREEN_OFF, GREEN_SOUND, 10, 10)
 red = None
 blue = None
 yellow = None
-
-# A list to hold all our button objects for easier access
-all_buttons = [green, red, blue, yellow]
 
 # --- Game Variables ---
 cpu_sequence = []
@@ -55,9 +48,7 @@ score = 0
 # Draws the initial game board
 def draw_board():
   # TODO: Call the .draw() method on all four button objects
-  # Pass in SCREEN as the argument.
-  # example: green.draw(SCREEN)
-  pass # Remove this pass statement when you add your code
+  pass
 
 # --- Game Logic Functions ---
 
@@ -71,8 +62,6 @@ def cpu_turn():
   if choice == "green":
     green.update(SCREEN)
   # TODO: Add the 'elif' conditions for "red", "blue", and "yellow"
-  # elif choice == "red":
-  #   red.update(SCREEN)
   
   # Allow the player to start their turn
   player_turn()
@@ -88,24 +77,19 @@ def repeat_cpu_sequence():
   for color in cpu_sequence:
     if color == "green":
       green.update(SCREEN)
-    elif color == "red":
-      red.update(SCREEN)
-    elif color == "blue":
-      blue.update(SCREEN)
-    else:
-      yellow.update(SCREEN)
+    # TODO: Add the 'elif' conditions for "red", "blue", and "yellow"
+    
     # Wait a little between button flashes
     pygame.time.wait(200)
 
 # Handles the player's turn
 def player_turn():
-  global player_sequence
+  global player_sequence # Use the global player_sequence variable
   player_sequence = [] # Reset player's sequence for this round
 
   # Loop until the player has matched the CPU's sequence length
   while len(player_sequence) < len(cpu_sequence):
-    waiting_for_input = True
-    while waiting_for_input:
+    while True:
       for event in pygame.event.get():
         if event.type == pygame.QUIT:
           game_over()
@@ -119,7 +103,7 @@ def player_turn():
           if green.selected(pos):
             green.update(SCREEN)
             player_sequence.append("green")
-            waiting_for_input = False # Exit the inner loop
+            break # Exit the inner loop
           # TODO: Add the 'elif' conditions for the other three buttons
           # elif red.selected(pos):
           #   ...
@@ -143,23 +127,20 @@ def check_sequence(player_sequence):
       # Give a small delay before the next round
       pygame.time.wait(500)
 
-
 # Quits the game
 def game_over():
   pygame.quit()
   quit()
 
-
 # --- Main Game Loop ---
-running = True
-while running:
+while True:
   # Handle the quit event
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
-      running = False
+      break
 
   # Clear the screen
-  SCREEN.fill((40, 40, 40)) # A dark grey background
+  SCREEN.fill((40, 40, 40)) # Dark grey colour
 
   # Draw the buttons
   draw_board()
