@@ -15,8 +15,8 @@ class Button(pygame.sprite.Sprite):
 
         # This creates the visual representation of the button
         self.image = pygame.Surface((230, 230))
+        
         # TODO: Fill the image with its "off" color
-        self.image.fill(self.color_off)
 
         # This gets the rectangular area of the image
         self.rect = self.image.get_rect()
