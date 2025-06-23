@@ -1,6 +1,5 @@
 import pygame
 import random
-import time
 from button import Button # Allows us to use our Button class
 
 pygame.init()
@@ -24,7 +23,7 @@ YELLOW_OFF = (150, 150, 0)
 
 # --- Sound Loading ---
 # TODO: Load the sounds for red, blue, and yellow
-GREEN_SOUND = pygame.mixer.Sound("assets/bell1.mp3")
+GREEN_SOUND = pygame.mixer.Sound("../assets/bell1.mp3")
 RED_SOUND = None
 BLUE_SOUND = None
 YELLOW_SOUND = None
