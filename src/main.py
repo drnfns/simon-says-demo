@@ -56,29 +56,21 @@ def draw_board():
 def cpu_turn():
   # Pick a random color and add it to the sequence
   choice = random.choice(colors)
-  cpu_sequence.append(choice)
-
-  # Illuminate the chosen button
-  if choice == "green":
-    green.update(SCREEN)
-  # TODO: Add the 'elif' conditions for "red", "blue", and "yellow"
-  
-  # Allow the player to start their turn
-  player_turn()
+  cpu_sequence.append(choice)  
 
 # Repeats the current CPU sequence for the player to see
 def repeat_cpu_sequence():
-  if not cpu_sequence:
+  if len(cpu_sequence) == 0:
     return # Do nothing if the sequence is empty
-  
+
   # A small delay before the sequence starts
   pygame.time.wait(500)
-  
+
   for color in cpu_sequence:
     if color == "green":
       green.update(SCREEN)
     # TODO: Add the 'elif' conditions for "red", "blue", and "yellow"
-    
+
     # Wait a little between button flashes
     pygame.time.wait(200)
 
@@ -89,42 +81,38 @@ def player_turn():
 
   # Loop until the player has matched the CPU's sequence length
   while len(player_sequence) < len(cpu_sequence):
-    while True:
+    clicked = False
+    # Listen for click event
+    while !clicked:
       for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-          game_over()
-        
-        # Check for a mouse click
-        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+        # Ignore events other than a mouse click
+        if event.type != pygame.MOUSEBUTTONUP or event.button != 1:
           # TODO: Get the current position of the mouse
           # pos = ...
-          
+
           # Check if the green button was selected
           if green.selected(pos):
             green.update(SCREEN)
             player_sequence.append("green")
-            break # Exit the inner loop
+            clicked = True # Exit the while loop, go to check_sequence
           # TODO: Add the 'elif' conditions for the other three buttons
           # elif red.selected(pos):
           #   ...
-          
+
     # After each player click, check if the sequence is correct so far
     check_sequence(player_sequence)
 
-
 # Checks if the player's move matches the CPU sequence
 def check_sequence(player_sequence):
-  global score
+  global score # Use the global score variable
   # Compare the player's sequence to the corresponding part of the CPU's sequence
   if player_sequence != cpu_sequence[:len(player_sequence)]:
     print("Wrong! Final Score:", score)
     game_over()
   else:
-    # If the player completes the whole sequence correctly
     if len(player_sequence) == len(cpu_sequence):
       score += 1
       print("Correct! Score:", score)
-      # Give a small delay before the next round
       pygame.time.wait(500)
 
 # Quits the game
@@ -133,24 +121,20 @@ def game_over():
   quit()
 
 # --- Main Game Loop ---
-while True:
+running = True
+while running:
   # Handle the quit event
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
-      break
+      running = False
 
-  # Clear the screen
-  SCREEN.fill((40, 40, 40)) # Dark grey colour
+  SCREEN.fill((40, 40, 40)) # Dark grey colour for background
 
-  # Draw the buttons
   draw_board()
-  
-  # Show the CPU sequence
-  repeat_cpu_sequence()
-  
-  # Let the CPU choose a new color and start the player's turn
   cpu_turn()
-  
+  repeat_cpu_sequence()
+  player_turn()
+
   # A brief pause before the next round starts
   pygame.time.wait(1000)
 
