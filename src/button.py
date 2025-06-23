@@ -11,9 +11,6 @@ class Button(pygame.sprite.Sprite):
     pygame.sprite.Sprite.__init__(self)
 
     # TODO: Initialize properties from the parameters
-    # self.color_on = color_on
-    # self.color_off = color_off
-    # self.sound = sound
     
     # This creates the visual representation of the button
     self.image = pygame.Surface((230, 230))
@@ -24,37 +21,28 @@ class Button(pygame.sprite.Sprite):
     self.rect = self.image.get_rect()
 
     # TODO: Assign the x, y coordinates to the top left of the sprite's rect
-    # self.rect.topleft = (x, y)
 
   # Draws the button sprite onto the pygame window when called
   def draw(self, screen):
     # TODO: Blit the button's image onto the screen at its rect position
-    # screen.blit(...)
-    pass # Remove this pass statement when you add your code
+    pass
 
   # Checks if this button was clicked/selected by the player
   def selected(self, mouse_pos):
     # TODO: Check if the mouse_pos is inside the button's rect.
-    # Use self.rect.collidepoint(mouse_pos)
     # Return True if it is, False if it's not.
-    pass # Remove this pass statement when you add your code
+    pass
 
   # Illuminates the button and plays its sound.
   def update(self, screen):
     # TODO: "Turn on" the button by filling its image with the "on" color
-    # self.image.fill(...)
     
     # TODO: Blit the image to the screen to show the color change
-    # screen.blit(...)
     
     # Refresh the display to make the change visible
     pygame.display.update()
 
     # TODO: Play the button's sound
-    # self.sound.play()
-
-    # --- This part is already done for you ---
-    # It handles turning the button back "off" after a short delay
 
     # Fill the image with the "off" color again
     self.image.fill(self.color_off)
