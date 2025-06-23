@@ -22,21 +22,18 @@ YELLOW_ON = (255, 255, 0)
 YELLOW_OFF = (150, 150, 0)
 
 # --- Sound Loading ---
-# TODO: Load the sounds for red, blue, and yellow
+# Load the sounds for red, blue, and yellow
 GREEN_SOUND = pygame.mixer.Sound("../assets/bell1.mp3")
-RED_SOUND = None
-BLUE_SOUND = None
-YELLOW_SOUND = None
+RED_SOUND = pygame.mixer.Sound("../assets/bell2.mp3")
+BLUE_SOUND = pygame.mixer.Sound("../assets/bell3.mp3")
+YELLOW_SOUND = pygame.mixer.Sound("../assets/bell4.mp3")
 
 # --- Button Sprite Objects ---
-# TODO: Create the red, blue, and yellow Button objects.
-# Use the green button as a reference. Its width and height are 230.
-# If the buttons are 230 pixels in width and height, and the spacing
-# are 10 pixels, where should the red, blue and yellow be?
+# Create the red, blue, and yellow Button objects.
 green = Button(GREEN_ON, GREEN_OFF, GREEN_SOUND, 10, 10)
-red = None
-blue = None
-yellow = None
+red = Button(RED_ON, RED_OFF, RED_SOUND, 260, 10)
+blue = Button(BLUE_ON, BLUE_OFF, BLUE_SOUND, 10, 260)
+yellow = Button(YELLOW_ON, YELLOW_OFF, YELLOW_SOUND, 260, 260)
 
 # --- Game Variables ---
 cpu_sequence = []
@@ -47,8 +44,11 @@ score = 0
 
 # Draws the initial game board
 def draw_board():
-    # TODO: Call the .draw() method on all four button objects
-    pass
+    # Call the .draw() method on all four button objects
+    green.draw(SCREEN)
+    red.draw(SCREEN)
+    blue.draw(SCREEN)
+    yellow.draw(SCREEN)
 
 
 # --- Game Logic Functions ---
@@ -62,7 +62,15 @@ def cpu_turn():
 
     if choice == "green":
         green.update(SCREEN)
-    # TODO: Add the 'elif' conditions for "red", "blue", and "yellow"
+    elif choice == "red":
+        red.update(SCREEN)
+    elif choice == "blue":
+        blue.update(SCREEN)
+    else:
+        yellow.update(SCREEN)
+
+    # Small delay for the player to see the sequence
+    pygame.time.wait(500)
 
     player_turn()
 
@@ -78,7 +86,12 @@ def repeat_cpu_sequence():
     for color in cpu_sequence:
         if color == "green":
             green.update(SCREEN)
-        # TODO: Add the 'elif' conditions for "red", "blue", and "yellow"
+        elif color == "red":
+            red.update(SCREEN)
+        elif color == "blue":
+            blue.update(SCREEN)
+        else:
+            yellow.update(SCREEN)
 
         # Wait a little between button flashes
         pygame.time.wait(200)
@@ -103,17 +116,26 @@ def player_turn():
                 if event.type != pygame.MOUSEBUTTONUP or event.button != 1:
                     continue
 
-                # TODO: Get the current position of the mouse
-                # pos = ...
+                # Get the current position of the mouse
+                pos = pygame.mouse.get_pos()
 
                 # Check if the green button was selected
                 if green.selected(pos):
                     green.update(SCREEN)
                     player_sequence.append("green")
                     clicked = True  # Exit the while loop, go to check_sequence
-                # TODO: Add the 'elif' conditions for the other three buttons
-                # elif red.selected(pos):
-                #   ...
+                elif red.selected(pos):
+                    red.update(SCREEN)
+                    player_sequence.append("red")
+                    clicked = True
+                elif blue.selected(pos):
+                    blue.update(SCREEN)
+                    player_sequence.append("blue")
+                    clicked = True
+                elif yellow.selected(pos):
+                    yellow.update(SCREEN)
+                    player_sequence.append("yellow")
+                    clicked = True
 
         # After each player click, check if the sequence is correct so far
         check_sequence(player_sequence)
