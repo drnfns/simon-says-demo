@@ -56,7 +56,13 @@ def draw_board():
 def cpu_turn():
   # Pick a random color and add it to the sequence
   choice = random.choice(colors)
-  cpu_sequence.append(choice)  
+  cpu_sequence.append(choice)
+
+  if choice == "green":
+    green.update(SCREEN)
+  # TODO: Add the 'elif' conditions for "red", "blue", and "yellow"
+
+  player_turn()
 
 # Repeats the current CPU sequence for the player to see
 def repeat_cpu_sequence():
@@ -83,21 +89,27 @@ def player_turn():
   while len(player_sequence) < len(cpu_sequence):
     clicked = False
     # Listen for click event
-    while !clicked:
+    while not clicked:
       for event in pygame.event.get():
+        # Check if player wants to quit
+        if event.type == pygame.QUIT:
+          game_over() # Quit immediately
+        
         # Ignore events other than a mouse click
         if event.type != pygame.MOUSEBUTTONUP or event.button != 1:
-          # TODO: Get the current position of the mouse
-          # pos = ...
-
-          # Check if the green button was selected
-          if green.selected(pos):
-            green.update(SCREEN)
-            player_sequence.append("green")
-            clicked = True # Exit the while loop, go to check_sequence
-          # TODO: Add the 'elif' conditions for the other three buttons
-          # elif red.selected(pos):
-          #   ...
+          continue
+        
+        # TODO: Get the current position of the mouse
+        # pos = ...
+        
+        # Check if the green button was selected
+        if green.selected(pos):
+          green.update(SCREEN)
+          player_sequence.append("green")
+          clicked = True # Exit the while loop, go to check_sequence
+        # TODO: Add the 'elif' conditions for the other three buttons
+        # elif red.selected(pos):
+        #   ...
 
     # After each player click, check if the sequence is correct so far
     check_sequence(player_sequence)
@@ -131,9 +143,8 @@ while running:
   SCREEN.fill((40, 40, 40)) # Dark grey colour for background
 
   draw_board()
-  cpu_turn()
   repeat_cpu_sequence()
-  player_turn()
+  cpu_turn()
 
   # A brief pause before the next round starts
   pygame.time.wait(1000)
